@@ -180,7 +180,7 @@ void draw()
 
   //timers
   int currTime = millis();
-  if (prevTime250 + 1000 <= currTime) {
+  if (prevTime250 + 250 <= currTime) {
     prevTime250 = currTime;
     timer250();
   }

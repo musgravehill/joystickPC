@@ -164,16 +164,6 @@ void setup() {
 
 void draw()
 {
-  //debug
-  if (isSerialPortSet == true) { 
-    while (mySerialPort.available () > 0) {
-      String inBuffer = mySerialPort.readString();   
-      if (inBuffer != null) {
-        println(inBuffer);
-      }
-    }
-  }
-
   //common  
   background(240);  
   noStroke();
@@ -248,27 +238,14 @@ void changeAppIcon(PImage img) {
 }
 
 void sendDataToController() {
-  /*
-  print("thr=");
-   print(pult_rover_throttle);
-   print(" yaw=");
-   print(pult_rover_yaw);
-   print(" pan=");
-   print(pult_cam_pan);
-   print(" tilt=");
-   print(pult_cam_tilt);
-   println(" ");
-   */
+  stringToArduino = "[" + pult_rover_throttle;
+  stringToArduino += "," + pult_rover_yaw;
+  stringToArduino += "," + pult_cam_pan;
+  stringToArduino += "," + pult_cam_tilt;
+  stringToArduino += "]";
 
-  if (isSerialPortSet == true) {     
-    stringToArduino = pult_rover_throttle + "";
-    stringToArduino += "," + pult_rover_yaw;
-    stringToArduino += "," + pult_cam_pan;
-    stringToArduino += "," + pult_cam_tilt;
-    stringToArduino += "]";
-
-    mySerialPort.write(stringToArduino);    
-    println("toArd=" + stringToArduino);
+  if (isSerialPortSet == true) { 
+    mySerialPort.write(stringToArduino);
   }
 }
 
@@ -296,5 +273,31 @@ void controlEvent(ControlEvent theEvent) {
 void startSerial() {   
   mySerialPort = new Serial(this, listSerialPorts[selectedSerialPortNumber], 57600);
   isSerialPortSet = true;
+}
+
+void debugOutSerial() {
+  println("out="+stringToArduino);
+  /*
+   print("thr=");
+   print(pult_rover_throttle);
+   print(" yaw=");
+   print(pult_rover_yaw);
+   print(" pan=");
+   print(pult_cam_pan);
+   print(" tilt=");
+   print(pult_cam_tilt);
+   println(" ");
+   */
+}
+
+void debugInSerial() {
+  if (isSerialPortSet == true) { 
+    while (mySerialPort.available () > 0) {
+      String inBuffer = mySerialPort.readString();   
+      if (inBuffer != null) {
+        println("in="+inBuffer);
+      }
+    }
+  }
 }
 

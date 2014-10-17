@@ -18,7 +18,7 @@ final static String CONST_ICON  = "icon.png";
 final static String CONST_TITLE = "Joystick Bob";
 
 //timers
-int prevTime250 = 0;
+long prevTime250 = 0;
 
 //rover control
 int pult_rover_outputRange = 500;  //output:  -pult_rover_outputRange .. +pult_rover_outputRange
@@ -180,7 +180,7 @@ void draw()
 
   //timers
   int currTime = millis();
-  if (prevTime250 + 250 <= currTime) {
+  if (prevTime250 + 1000 <= currTime) {
     prevTime250 = currTime;
     timer250();
   }

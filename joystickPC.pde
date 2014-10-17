@@ -163,7 +163,7 @@ void setup() {
 }
 
 void draw()
-{
+{    
   //common  
   background(240);  
   noStroke();
@@ -247,6 +247,7 @@ void sendDataToController() {
   if (isSerialPortSet == true) { 
     mySerialPort.write(stringToArduino);
   }
+  debugOutSerial(); //DEBUG
 }
 
 void controlEvent(ControlEvent theEvent) {

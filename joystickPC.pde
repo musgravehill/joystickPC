@@ -272,7 +272,7 @@ void controlEvent(ControlEvent theEvent) {
 }
 
 void startSerial() {   
-  mySerialPort = new Serial(this, listSerialPorts[selectedSerialPortNumber], 57600);
+  mySerialPort = new Serial(this, listSerialPorts[selectedSerialPortNumber], 115200);
   isSerialPortSet = true;
 }
 

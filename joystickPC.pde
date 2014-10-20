@@ -21,12 +21,11 @@ final static String CONST_TITLE = "Joystick Bob";
 long prevTime50 = 0;
 
 //rover control
-int pult_rover_outputRange = 500;  //output:  -pult_rover_outputRange .. +pult_rover_outputRange
 float pult_rover_renderWidth=200; //px
 float pult_rover_renderHeight=200; //px
-float pult_rover_maxJoystickRange=100;     //Maximum pultstick range === pult_rover_renderWidth/2 
-float pult_rover_curJoystickAngle;     //Current pultstick angle
-float pult_rover_curJoystickRange;     //Current pultstick range
+float pult_rover_maxJoystickAmplitude=pult_rover_renderWidth/2;     //Maximum pultstick range === pult_rover_renderWidth/2 
+float pult_rover_curJoystickAngle;     //Current pultstick angle RADIAN -PI..+PI
+float pult_rover_curJoystickAmplitude;     //Current pultstick range
 float pult_rover_renderCenterX=100;  //Joystick displayed Center X
 float pult_rover_renderCenterY=100;  //Joystick displayed Center Y
 boolean isMouseTracking=false;
@@ -55,7 +54,7 @@ void setup() {
   changeAppIcon(loadImage(CONST_ICON));
   frame.setTitle(CONST_TITLE);   
   strokeWeight(10.0);   
-  controlP5 = new ControlP5(this);   
+  controlP5 = new ControlP5(this); 
 
   //serial  
   dropdownSerialPorts = controlP5.addDropdownList("dropdownSerialPorts", 240, 20, 100, 84); //left,top, w,h
@@ -198,22 +197,28 @@ void draw()
   }
   if (isMouseTracking) {
     pult_rover_curJoystickAngle = atan2(dy, dx);
-    pult_rover_curJoystickRange = dist(mouseX, mouseY, pult_rover_renderCenterX, pult_rover_renderCenterY);
-    if (pult_rover_curJoystickRange > pult_rover_maxJoystickRange) {
-      pult_rover_curJoystickRange = pult_rover_maxJoystickRange;
+    pult_rover_curJoystickAmplitude = dist(mouseX, mouseY, pult_rover_renderCenterX, pult_rover_renderCenterY);
+    if (pult_rover_curJoystickAmplitude > pult_rover_maxJoystickAmplitude) {
+      pult_rover_curJoystickAmplitude = pult_rover_maxJoystickAmplitude;
     }
   } else {
-    pult_rover_curJoystickRange = 0;
+    pult_rover_curJoystickAmplitude = 0;
   }
   renderPultStick(pult_rover_renderCenterX, pult_rover_renderCenterY, pult_rover_curJoystickAngle);
+  
+  pult_rover_yawRaw = round(pult_rover_curJoystickAngle * 1000); 
+  if ( (pult_rover_curJoystickAngle > 0)  & (pult_rover_curJoystickAngle < 3143)    ) {    
+    pult_rover_throttleRaw = - 5 * pult_rover_curJoystickAmplitude; //normalize coeff
+    pult_rover_yawRaw = 500 - pult_rover_yawRaw * 1000/3142; //normalize coeff
+  } else {    
+    pult_rover_throttleRaw = 5 * pult_rover_curJoystickAmplitude; //normalize coeff
+    pult_rover_yawRaw = 500 + pult_rover_yawRaw * 1000/3142; //normalize coeff
+  }     
 
-  pult_rover_throttleRaw = (pult_rover_outputRange*(-(sin(pult_rover_curJoystickAngle) * pult_rover_curJoystickRange)/pult_rover_maxJoystickRange));
-  pult_rover_yawRaw = (pult_rover_outputRange*(cos(pult_rover_curJoystickAngle) * pult_rover_curJoystickRange)/ pult_rover_maxJoystickRange);
-
-  pult_rover_throttle = 500 + round(pult_rover_throttleRaw);
-  pult_rover_yaw = 500 + round(pult_rover_yawRaw);
-  pult_cam_pan = pult_cam_panRaw;
-  pult_cam_tilt = pult_cam_tiltRaw;
+  pult_rover_throttle = round(pult_rover_throttleRaw);
+  pult_rover_yaw = round(pult_rover_yawRaw);
+  pult_cam_pan = -500 + pult_cam_panRaw;
+  pult_cam_tilt = -500 + pult_cam_tiltRaw;
 }
 
 void timer50() {
@@ -225,7 +230,7 @@ void renderPultStick(float x, float y, float a)
   pushMatrix();
   translate(x, y);
   rotate(a);  
-  line(0, 0, pult_rover_curJoystickRange, 0);
+  line(0, 0, pult_rover_curJoystickAmplitude, 0);
   popMatrix();
 }
 

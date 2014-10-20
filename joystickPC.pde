@@ -18,7 +18,7 @@ final static String CONST_ICON  = "icon.png";
 final static String CONST_TITLE = "Joystick Bob";
 
 //timers
-long prevTime250 = 0;
+long prevTime50 = 0;
 
 //rover control
 int pult_rover_outputRange = 500;  //output:  -pult_rover_outputRange .. +pult_rover_outputRange
@@ -47,7 +47,7 @@ PImage camImg;
 
 void setup() {    
   //timers
-  prevTime250 = millis();
+  prevTime50 = millis();
 
   //common
   size(displayWidth, displayHeight);      
@@ -170,9 +170,9 @@ void draw()
 
   //timers
   int currTime = millis();
-  if (prevTime250 + 250 <= currTime) {
-    prevTime250 = currTime;
-    timer250();
+  if (prevTime50 + 50 <= currTime) {
+    prevTime50 = currTime;
+    timer50();
   }
 
   //camera control
@@ -216,7 +216,7 @@ void draw()
   pult_cam_tilt = pult_cam_tiltRaw;
 }
 
-void timer250() {
+void timer50() {
   sendDataToController();
 }
 

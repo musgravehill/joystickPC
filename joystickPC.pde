@@ -205,7 +205,7 @@ void draw()
     pult_rover_curJoystickAmplitude = 0;
   }
   renderPultStick(pult_rover_renderCenterX, pult_rover_renderCenterY, pult_rover_curJoystickAngle);
-  
+
   pult_rover_yawRaw = round(pult_rover_curJoystickAngle * 1000); 
   if ( (pult_rover_curJoystickAngle > 0)  & (pult_rover_curJoystickAngle < 3143)    ) {    
     pult_rover_throttleRaw = - 5 * pult_rover_curJoystickAmplitude; //normalize coeff
@@ -214,6 +214,10 @@ void draw()
     pult_rover_throttleRaw = 5 * pult_rover_curJoystickAmplitude; //normalize coeff
     pult_rover_yawRaw = 500 + pult_rover_yawRaw * 1000/3142; //normalize coeff
   }     
+  //center
+  if(abs(pult_rover_throttleRaw) < 5){  
+     pult_rover_yawRaw = 0;
+  }
 
   pult_rover_throttle = round(pult_rover_throttleRaw);
   pult_rover_yaw = round(pult_rover_yawRaw);
